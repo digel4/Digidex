@@ -1,0 +1,16 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContactPro", "ContactPro\ContactPro.csproj", "{A26AE10E-5A8F-4C45-A310-D60185C0E3D4}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A26AE10E-5A8F-4C45-A310-D60185C0E3D4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A26AE10E-5A8F-4C45-A310-D60185C0E3D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A26AE10E-5A8F-4C45-A310-D60185C0E3D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A26AE10E-5A8F-4C45-A310-D60185C0E3D4}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
