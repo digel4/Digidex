@@ -1,0 +1,28 @@
+@model CustomError
+@{
+    ViewData["Title"] = "HandleError";
+}
+
+@* <!DOCTYPE html> *@
+@* *@
+@* <html> *@
+@* <head> *@
+@*     <title>title</title> *@
+@* </head> *@
+@* <body> *@
+    <div class="row row-cols-1">
+      <div class="col text-center">
+        <img src="~/img/oops.png" alt="Page not found" class="img-fluid" />
+      </div>
+      <div class="col text-center display-5 my-3 fw-bold">@Model.code</div>
+      <div class="col text-center h4">
+        @Model.message
+      </div>
+      <div class="col text-center mt-3">
+        <a asp-action="Index" asp-controller="home" class="btn btn-primary btn-lg rounded-pill" >
+          Go To Homepage
+        </a>
+      </div>
+    </div>
+@* </body> *@
+@* </html> *@

@@ -5,6 +5,8 @@ using Microsoft.EntityFrameworkCore;
 using ContactPro.Services;
 using ContactPro.Services.Interfaces;
 using Microsoft.AspNetCore.Identity.UI.Services;
+
+
 //using ContactPro.Helpers;
 // using Azure.Identity;
 
@@ -12,7 +14,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 //var keyVaultEndpoint = new Uri(Environment.GetEnvironmentVariable("VaultUri"));
 //builder.Configuration.AddAzureKeyVault(keyVaultEndpoint, new DefaultAzureCredential());
-;
+
 // var connectionString = ConnectionHelper.GetConnectionString(builder.Configuration);
 var connectionString = builder.Configuration.GetSection("pgSettings")["PgConnection"];
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -27,6 +29,9 @@ builder.Services.AddControllersWithViews();
 /// 
 builder.Services.AddScoped<IImageService, ImageService>();
 builder.Services.AddScoped<IAddressBookService, AddressBookService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
+
+builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
 
 var app = builder.Build();
 var scope = app.Services.CreateScope();
@@ -46,6 +51,7 @@ else
     app.UseHsts();
 }
 
+//Custom error handler for the entire app. When an error happens go to route below with error code[0]/ Because this is an actual route /Home goes to the Homecontroller {HandleError}
 app.UseStatusCodePagesWithReExecute("/Home/HandleError/{0}");
 
 app.UseHttpsRedirection();
