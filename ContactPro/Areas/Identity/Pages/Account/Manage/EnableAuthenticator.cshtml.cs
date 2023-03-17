@@ -181,7 +181,7 @@ namespace ContactPro.Areas.Identity.Pages.Account.Manage
             return string.Format(
                 CultureInfo.InvariantCulture,
                 AuthenticatorUriFormat,
-                _urlEncoder.Encode("BlackBook Pro"),
+                _urlEncoder.Encode("Digidex"),
                 _urlEncoder.Encode(email),
                 unformattedKey);
         }
