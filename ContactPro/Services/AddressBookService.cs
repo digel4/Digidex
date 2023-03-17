@@ -40,7 +40,10 @@ namespace ContactPro.Services
         {
             try
             {
-                Contact? contact = await _context.Contacts.Include(c => c.Categories).FirstOrDefaultAsync(c => c.Id == contactId);
+                Contact? contact = await _context.Contacts
+                    .Include(c => c.Categories)
+                    .FirstOrDefaultAsync(c => c.Id == contactId);
+                
                 return contact.Categories;
             }
             catch (Exception)
@@ -52,16 +55,16 @@ namespace ContactPro.Services
         public async Task<ICollection<int>> GetContactCategoryIdsAsync(int contactId)
         {
             try { 
-                    var contact = await _context.Contacts.Include(c => c.Categories)
-                                                        .FirstOrDefaultAsync(c => c.Id == contactId);
-
-                    List<int> categoryIds = contact.Categories.Select(c => c.Id).ToList();
-                     return categoryIds;
-
-            
+                var contact = await _context.Contacts
+                    .Include(c => c.Categories)
+                    .FirstOrDefaultAsync(c => c.Id == contactId); 
+                
+                List<int> categoryIds = contact.Categories.Select(c => c.Id).ToList(); 
+                
+                return categoryIds;
             }
             catch(Exception) { 
-            throw;
+                throw;
             }
         }
 
@@ -71,9 +74,10 @@ namespace ContactPro.Services
 
             try
             {
-                categories = await _context.Categories.Where( c => c.AppUserId == userId)
-                                                       .OrderBy(c => c.Name)
-                                                       .ToListAsync();
+                categories = await _context.Categories
+                    .Where( c => c.AppUserId == userId)
+                    .OrderBy(c => c.Name)
+                    .ToListAsync();
             }
             catch
             {

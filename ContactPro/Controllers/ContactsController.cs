@@ -10,35 +10,41 @@ using ContactPro.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
 using ContactPro.Enums;
+using ContactPro.Models.ViewModels;
 using ContactPro.Services.Interfaces;
 using ContactPro.Services;
 using Microsoft.AspNetCore.Identity.UI.Services;
+
 
 namespace ContactPro.Controllers
 {
     public class ContactsController : Controller
     {
+        // These are all being injected into the class and initialised as private varables (standard practice is to start private vars with _
         private readonly ApplicationDbContext _context;
         private readonly UserManager<AppUser> _userManager;
         private readonly IImageService _imageService;
         private readonly IAddressBookService _addressBookService;
+        private readonly IEmailService _emailService;
 
 
         public ContactsController(ApplicationDbContext context, 
                                   UserManager<AppUser> userManager,
                                   IImageService imageService,
-                                  IAddressBookService addressBookService)
+                                  IAddressBookService addressBookService,
+                                  IEmailService emailService)
         {
             _context = context;
             _userManager = userManager;
             _imageService = imageService;  
             _addressBookService = addressBookService;
-
+            _emailService = emailService;
         }
 
         // GET: Contacts
         [Authorize]
         public async Task<IActionResult> Index(int categoryId, string swalMessage = null)
+        //IActionResult means it returns a view
         {
             ViewData["SwalMessage"] = swalMessage;
 
@@ -113,7 +119,60 @@ namespace ContactPro.Controllers
 
             return View(nameof(Index), contacts);
         }
+
+        // GET
+        [Authorize]
+        public async Task<IActionResult> EmailContact(int id)
+        {
+            string appUserId = _userManager.GetUserId(User);
+
+            Contact contact = await _context.Contacts.Where(c => c.Id == id && c.AppUserId == appUserId)
+                .FirstOrDefaultAsync();
+
+            if (contact == null)
+            {
+                return NotFound();
+            }
+
+            EmailData emailData = new EmailData()
+            {
+                Address = contact.Email,
+                FirstName = contact.FirstName,
+                LastName = contact.LastName
+            };
+
+            EmailContactViewModel model = new EmailContactViewModel()
+            {
+                Contact = contact,
+                EmailData = emailData
+            };
+            
+            return View(model);
+        }
         
+        //POST
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> EmailContact(EmailContactViewModel ecvm)
+        {
+            // If the values from emailData and EmailContactViewModel  match up with the values sent from the EmailContact view
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    await _emailService.SendEmailAsync(ecvm.EmailData.Address, ecvm.EmailData.Subject,
+                        ecvm.EmailData.Body);
+                    // Last parameter is just a plain new object
+                    return RedirectToAction("Index", "Contacts", new{ swalMessage = "Success: Email Sent!" });
+                }
+                catch
+                {
+                    return RedirectToAction("Index", "Contacts", new{ swalMessage = "Error: Email Send Failed!" });
+                }
+            }
+
+            return View(ecvm);
+        }
         
         // GET: Contacts/Details/5
         [Authorize]
@@ -200,7 +259,8 @@ namespace ContactPro.Controllers
 
             string appUserId = _userManager.GetUserId(User);
 
-            //var contact = await _context.Contacts.FindAsync(id);
+            // original scaffolded line: var contact = await _context.Contacts.FindAsync(id);
+            // OG line is wrong because there's a security issue where a client could put in a different id and get back contacts that dont belong to them.
             var contact = await _context.Contacts.Where(c => c.Id == id && c.AppUserId == appUserId)
                                                  .FirstOrDefaultAsync();
             
@@ -220,7 +280,8 @@ namespace ContactPro.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,AppUserID,FirstName,LastName,BirthDate,Address1,Address2,City,County,PostCode,Email,PhoneNumber,Created,ImageFile,ImageData,ImageType")] Contact contact, List<int> CategoryList)
+        // Anything named in the form on the front end that is pushed can be accessed here as a paramenter. Hence CategoryList isn't in the Contacts model but we still have access to it here.
+        public async Task<IActionResult> Edit(int id, [Bind("Id,AppUserId,FirstName,LastName,BirthDate,Address1,Address2,City,County,PostCode,Email,PhoneNumber,Created,ImageFile,ImageData,ImageType")] Contact contact, List<int> CategoryList)
         {
             if (id != contact.Id)
             {
@@ -231,10 +292,12 @@ namespace ContactPro.Controllers
             {
                 try
                 {
+                    // We need to override the default date object so it fits into the database
                     contact.Created = DateTime.SpecifyKind(contact.Created, DateTimeKind.Utc);
 
                     if(contact.BirthDate != null)
                     {
+                        // We need to override the default date object so it fits into the database
                         contact.BirthDate = DateTime.SpecifyKind(contact.BirthDate.Value, DateTimeKind.Utc);
                     }
 
@@ -258,9 +321,9 @@ namespace ContactPro.Controllers
 
                     //add the selected categories
 
-                    foreach(int categoryid in CategoryList)
+                    foreach(int categoryId in CategoryList)
                     {
-                        await _addressBookService.AddContactToCategoryAsync(categoryid, contact.Id);
+                        await _addressBookService.AddContactToCategoryAsync(categoryId, contact.Id);
                     }
 
                 }
@@ -291,7 +354,8 @@ namespace ContactPro.Controllers
             }
 
             string appUserId = _userManager.GetUserId(User);
-
+            
+            // In previous examples of the following code we use a where clause but we can also add the filtering logic to FirstOrDefaultAsync
             var contact = await _context.Contacts
                       .FirstOrDefaultAsync(c => c.Id == id && c.AppUserId == appUserId);
             if (contact == null)
@@ -309,7 +373,8 @@ namespace ContactPro.Controllers
         {
             string appUserId = _userManager.GetUserId(User);
 
-            var contact = await _context.Contacts.FirstOrDefaultAsync(c => c.Id == id && c.AppUserId == appUserId);
+            var contact = await _context.Contacts
+                .FirstOrDefaultAsync(c => c.Id == id && c.AppUserId == appUserId);
 
             if (contact != null)
             {
