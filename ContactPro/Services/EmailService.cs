@@ -21,7 +21,8 @@ public class EmailService : IEmailService
     
     public async Task SendEmailAsync(string email, string subject, string htmlMessage)
     {
-        var emailSender = _mailSettings.Email;
+        // if _mailSettings.Email returns null then initialise emailSender with Environment.GetEnvironmentVariable()
+        var emailSender = _mailSettings.Email ?? Environment.GetEnvironmentVariable("Email");
 
         MimeMessage newEmail = new();
 
@@ -45,9 +46,9 @@ public class EmailService : IEmailService
 
         try
         {
-            var host = _mailSettings.Host;
-            var port = _mailSettings.Port;
-            var password = _mailSettings.Password;
+            var host = _mailSettings.Host ?? Environment.GetEnvironmentVariable("Host");
+            var port = _mailSettings.Port != 0 ? _mailSettings.Port  : int.Parse(Environment.GetEnvironmentVariable("Port"));
+            var password = _mailSettings.Password ?? Environment.GetEnvironmentVariable("Password");
 
             await smtpClient.ConnectAsync(host, port, StartTls);
             await smtpClient.AuthenticateAsync(emailSender, password);
