@@ -21,7 +21,7 @@ namespace ContactPro.Services
                 if (!await IsContactInCategory(categoryId, contactId))
                 {
                     Contact? contact = await _context.Contacts.FindAsync(contactId);
-                    Category? category = await _context.Categories.FindAsync(contactId);
+                    Category? category = await _context.Categories.FindAsync(categoryId);
 
                     if (category != null && contact != null)
                     {
@@ -89,11 +89,11 @@ namespace ContactPro.Services
         public async Task<bool> IsContactInCategory(int categoryId, int contactId)
         {
             Contact? contact = await _context.Contacts.FindAsync(contactId);
-
-            return await _context.Categories
-                            .Include(c => c.Contacts)
-                            .Where(c => c.Id == categoryId && c.Contacts.Contains(contact))
-                            .AnyAsync();
+            var result = await _context.Categories
+                .Include(c => c.Contacts)
+                .Where(c => c.Id == categoryId && c.Contacts.Contains(contact))
+                .AnyAsync();
+            return result;
         }
 
         public async Task RemoveContactFromCategoryAsync(int categoryId, int contactId)

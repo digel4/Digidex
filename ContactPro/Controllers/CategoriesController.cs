@@ -4,8 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using ContactPro.Models.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using ContactPro.Data;
+using ContactPro.Services.Interfaces;
 using ContactPro.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
@@ -17,11 +19,14 @@ namespace ContactPro.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<AppUser> _userManager;
+        private readonly IEmailService _emailService;
         public CategoriesController(ApplicationDbContext context,
-                            UserManager<AppUser> userManager)
+                            UserManager<AppUser> userManager,
+                            IEmailService emailService)
         {
             _context = context;
             _userManager = userManager;
+            _emailService = emailService;
         }
 
         // GET: Categories
@@ -37,6 +42,64 @@ namespace ContactPro.Controllers
                                                 .ToListAsync();
                                                 
             return View(categories);
+        }
+        
+        // GET EmailCategory
+        [Authorize]
+        public async Task<IActionResult> EmailCategory(int id)
+        {
+            string appUserId = _userManager.GetUserId(User);
+
+            Category category = await _context.Categories
+                .Include(c => c.Contacts)
+                .FirstOrDefaultAsync(c => c.Id == id && c.AppUserId == appUserId);
+
+            if (category == null)
+            {
+                return NotFound();
+            }
+
+            List<string> emails = category.Contacts.Select(c => c.Email).ToList();
+
+            EmailData emailData = new EmailData()
+            {
+                GroupName = category.Name,
+                // Address on the email data accepts a string but in EmailService we've set it up so that it can parse a big comma separated string on email addresses so we're sending one big string to email data
+                Address = String.Join(";", emails),
+                Subject = $"Group Message: {category.Name}"
+            };
+
+            EmailCategoryViewModel model = new EmailCategoryViewModel()
+            {
+                Contacts = category.Contacts.ToList(),
+                EmailData = emailData
+            };
+            
+            return View(model);
+        }
+        
+        //POST EmailCategory
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> EmailCategory(EmailCategoryViewModel ecvm)
+        {
+            // If the values from emailData and EmailContactViewModel  match up with the values sent from the EmailContact view
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    await _emailService.SendEmailAsync(ecvm.EmailData.Address, ecvm.EmailData.Subject,
+                        ecvm.EmailData.Body);
+                    // Last parameter is just a plain new object
+                    return RedirectToAction("Index", "Categories", new{ swalMessage = "Success: Email Sent!" });
+                }
+                catch
+                {
+                    return RedirectToAction("Index", "Categories", new{ swalMessage = "Error: Email Send Failed!" });
+                }
+            }
+
+            return View(ecvm);
         }
         
         // GET: Categories/Create

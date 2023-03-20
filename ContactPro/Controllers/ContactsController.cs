@@ -20,7 +20,7 @@ namespace ContactPro.Controllers
 {
     public class ContactsController : Controller
     {
-        // These are all being injected into the class and initialised as private varables (standard practice is to start private vars with _
+        // These are all being injected into the class and initialised as private variables (standard practice is to start private vars with _
         private readonly ApplicationDbContext _context;
         private readonly UserManager<AppUser> _userManager;
         private readonly IImageService _imageService;
@@ -43,12 +43,11 @@ namespace ContactPro.Controllers
 
         // GET: Contacts
         [Authorize]
-        public async Task<IActionResult> Index(int categoryId, string swalMessage = null)
+        public IActionResult Index(int categoryId, string swalMessage = null)
         //IActionResult means it returns a view
         {
             ViewData["SwalMessage"] = swalMessage;
-
-
+            
             List<Contact> contacts = new List<Contact>();
             //  Something WRONG HERE NOT SURE WHAT YET var contacts = new List<Contact>();
             string appUserId = _userManager.GetUserId(User);
@@ -63,8 +62,8 @@ namespace ContactPro.Controllers
             //     .FirstOrDefault(u => u.Id == appUserId);
             //
             //
-            // var categories = await _context.Categories.Where(c => c.AppUserId == appUserId)
-            //     .Include(c => c.AppUser)
+            // var categories = _context.Categories.Where(c => c.AppUserId == appUserId)
+            //     .Include(c => c.AppUser);
 
             var categories = appUser.Categories;
 
