@@ -204,6 +204,7 @@ namespace ContactPro.Controllers
 
             string appUserId = _userManager.GetUserId(User);
 
+            // Get cateogries that are related to the appUserId
             var category = await _context.Categories
                                  .FirstOrDefaultAsync(c => c.Id == id && c.AppUserId == appUserId);
 
@@ -230,7 +231,6 @@ namespace ContactPro.Controllers
                 await _context.SaveChangesAsync();  
             }
             
-           
             return RedirectToAction(nameof(Index));
         }
 

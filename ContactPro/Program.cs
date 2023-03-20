@@ -1,5 +1,6 @@
 using ContactPro.Data;
 using ContactPro.Models;
+using ContactPro.Helpers;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using ContactPro.Services;
@@ -15,8 +16,8 @@ var builder = WebApplication.CreateBuilder(args);
 //var keyVaultEndpoint = new Uri(Environment.GetEnvironmentVariable("VaultUri"));
 //builder.Configuration.AddAzureKeyVault(keyVaultEndpoint, new DefaultAzureCredential());
 
-// var connectionString = ConnectionHelper.GetConnectionString(builder.Configuration);
-var connectionString = builder.Configuration.GetSection("pgSettings")["PgConnection"];
+//var connectionString = builder.Configuration.GetSection("pgSettings")["PgConnection"];
+var connectionString = ConnectionHelper.GetConnectionString(builder.Configuration);
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
@@ -26,7 +27,7 @@ builder.Services.AddDefaultIdentity<AppUser>(options => options.SignIn.RequireCo
 builder.Services.AddControllersWithViews();
 
 ///custom Services
-/// 
+
 builder.Services.AddScoped<IImageService, ImageService>();
 builder.Services.AddScoped<IAddressBookService, AddressBookService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
