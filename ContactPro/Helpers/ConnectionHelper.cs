@@ -16,13 +16,19 @@ public static class ConnectionHelper
 
               if (string.IsNullOrEmpty(databaseUrl))
               {
+<<<<<<< HEAD
                      Console.WriteLine($"connectionString");
+=======
+>>>>>>> c3766515a26cb6e6fc5e08a4e8650202d88c1cb9
                      return connectionString;
               }
               else
               {
                      var newConnectionString = BuildConnectionString(databaseUrl);
+<<<<<<< HEAD
                      Console.WriteLine($"returning newConnectionString");
+=======
+>>>>>>> c3766515a26cb6e6fc5e08a4e8650202d88c1cb9
                      return newConnectionString;
               }
               
