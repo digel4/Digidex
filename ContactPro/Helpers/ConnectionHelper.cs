@@ -13,6 +13,7 @@ public static class ConnectionHelper
 
               Console.WriteLine($"inside GetConnectionString");
               Console.WriteLine($"databaseUrl is: {databaseUrl}");
+              Console.WriteLine($"IsNullOrEmpty: {string.IsNullOrEmpty(databaseUrl)}");
 
               if (string.IsNullOrEmpty(databaseUrl))
               {
