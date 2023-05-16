@@ -13,8 +13,18 @@ public static class ConnectionHelper
 
               Console.WriteLine($"inside GetConnectionString");
               Console.WriteLine($"databaseUrl is: {databaseUrl}");
+
+              if (string.IsNullOrEmpty(databaseUrl))
+              {
+                     return connectionString;
+              }
+              else
+              {
+                     var newConnectionString = BuildConnectionString(databaseUrl);
+                     return newConnectionString;
+              }
               
-              return string.IsNullOrEmpty(databaseUrl) ? connectionString : BuildConnectionString(databaseUrl);
+              //return string.IsNullOrEmpty(databaseUrl) ? connectionString : BuildConnectionString(databaseUrl);
        }
 
        // Build a connection string from the env. i.e. Heroku
