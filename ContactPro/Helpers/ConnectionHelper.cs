@@ -23,10 +23,9 @@ public static class ConnectionHelper
               }
               else
               {
-                     var newConnectionString = BuildConnectionString(databaseUrl);
-
                      Console.WriteLine($"returning newConnectionString");
-
+                     var newConnectionString = BuildConnectionString(databaseUrl);
+                     
                      return newConnectionString;
               }
               
