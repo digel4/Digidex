@@ -16,9 +16,6 @@ var builder = WebApplication.CreateBuilder(args);
 //var keyVaultEndpoint = new Uri(Environment.GetEnvironmentVariable("VaultUri"));
 //builder.Configuration.AddAzureKeyVault(keyVaultEndpoint, new DefaultAzureCredential());
 
-Console.WriteLine("inside Program.cs");
-
-
 //var connectionString = builder.Configuration.GetSection("pgSettings")["PgConnection"];
 var connectionString = ConnectionHelper.GetConnectionString(builder.Configuration);
 builder.Services.AddDbContext<ApplicationDbContext>(options =>

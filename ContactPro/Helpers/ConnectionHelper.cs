@@ -11,40 +11,14 @@ public static class ConnectionHelper
               // databaseUrl will only have a value in a production env
               var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
 
-              Console.WriteLine($"inside GetConnectionString");
-              Console.WriteLine($"databaseUrl is: {databaseUrl}");
-              Console.WriteLine($"IsNullOrEmpty: {string.IsNullOrEmpty(databaseUrl)}");
-
-              if (string.IsNullOrEmpty(databaseUrl))
-              {
-
-                     Console.WriteLine($"connectionString");
-                     return connectionString;
-              }
-              else
-              {
-                     Console.WriteLine($"returning newConnectionString");
-                     var newConnectionString = BuildConnectionString(databaseUrl);
-                     
-                     return newConnectionString;
-              }
-              
-              //return string.IsNullOrEmpty(databaseUrl) ? connectionString : BuildConnectionString(databaseUrl);
+              return string.IsNullOrEmpty(databaseUrl) ? connectionString : BuildConnectionString(databaseUrl);
        }
 
        // Build a connection string from the env. i.e. Heroku
        private static string BuildConnectionString(string databaseUrl)
        {
-              Console.WriteLine($"initializing  databasUri");
               var databaseUri = new Uri(databaseUrl);
-              Console.WriteLine($"databasUri is: {databaseUri}");
-              
-              Console.WriteLine($"initializing userInfo");
               var userInfo = databaseUri.UserInfo.Split(":");
-              Console.WriteLine($"databaseUri.UserInfo is: {databaseUri.UserInfo}");
-              Console.WriteLine($"userInfo is: {userInfo}");
-              
-              Console.WriteLine($"initializing builder");
               var builder = new NpgsqlConnectionStringBuilder
               {
                      Host = databaseUri.Host,
@@ -56,10 +30,6 @@ public static class ConnectionHelper
                      TrustServerCertificate = true
 
               };
-              Console.WriteLine($"inside BuildConnectionString");
-
-
-              Console.WriteLine($"builder is: {builder}");
               return builder.ToString();
        }
 }
