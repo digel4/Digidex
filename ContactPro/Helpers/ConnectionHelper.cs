@@ -40,7 +40,7 @@ public static class ConnectionHelper
               Console.WriteLine($"databasUri is: {databaseUri}");
               
               Console.WriteLine($"initializing userInfo");
-              var userInfo = databaseUri.UserInfo.Split(";");
+              var userInfo = databaseUri.UserInfo.Split(":");
               Console.WriteLine($"databaseUri.UserInfo is: {databaseUri.UserInfo}");
               Console.WriteLine($"userInfo is: {userInfo}");
               
