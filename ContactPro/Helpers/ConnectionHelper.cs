@@ -35,8 +35,15 @@ public static class ConnectionHelper
        // Build a connection string from the env. i.e. Heroku
        private static string BuildConnectionString(string databaseUrl)
        {
+              Console.WriteLine($"initializing  databasUri");
               var databasUri = new Uri(databaseUrl);
+              Console.WriteLine($"databasUri is: {databasUri}");
+              
+              Console.WriteLine($"initializing userInfo");
               var userInfo = databasUri.UserInfo.Split(";");
+              Console.WriteLine($"userInfo is: {userInfo}");
+              
+              Console.WriteLine($"initializing builder");
               var builder = new NpgsqlConnectionStringBuilder
               {
                      Host = databasUri.Host,
@@ -49,8 +56,8 @@ public static class ConnectionHelper
 
               };
               Console.WriteLine($"inside BuildConnectionString");
-              Console.WriteLine($"databasUri is: {databasUri}");
-              Console.WriteLine($"userInfo is: {userInfo}");
+
+
               Console.WriteLine($"builder is: {builder}");
               return builder.ToString();
        }
