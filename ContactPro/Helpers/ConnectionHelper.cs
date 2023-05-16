@@ -11,6 +11,9 @@ public static class ConnectionHelper
               // databaseUrl will only have a value in a production env
               var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
 
+              Console.WriteLine($"inside GetConnectionString");
+              Console.WriteLine($"databaseUrl is: {databaseUrl}");
+              
               return string.IsNullOrEmpty(databaseUrl) ? connectionString : BuildConnectionString(databaseUrl);
        }
 
@@ -30,6 +33,10 @@ public static class ConnectionHelper
                      TrustServerCertificate = true
 
               };
+              Console.WriteLine($"inside BuildConnectionString");
+              Console.WriteLine($"databasUri is: {databasUri}");
+              Console.WriteLine($"userInfo is: {userInfo}");
+              Console.WriteLine($"builder is: {builder}");
               return builder.ToString();
        }
 }
