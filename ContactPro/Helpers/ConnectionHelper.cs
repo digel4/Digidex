@@ -36,21 +36,22 @@ public static class ConnectionHelper
        private static string BuildConnectionString(string databaseUrl)
        {
               Console.WriteLine($"initializing  databasUri");
-              var databasUri = new Uri(databaseUrl);
-              Console.WriteLine($"databasUri is: {databasUri}");
+              var databaseUri = new Uri(databaseUrl);
+              Console.WriteLine($"databasUri is: {databaseUri}");
               
               Console.WriteLine($"initializing userInfo");
-              var userInfo = databasUri.UserInfo.Split(";");
+              var userInfo = databaseUri.UserInfo.Split(";");
+              Console.WriteLine($"databaseUri.UserInfo is: {databaseUri.UserInfo}");
               Console.WriteLine($"userInfo is: {userInfo}");
               
               Console.WriteLine($"initializing builder");
               var builder = new NpgsqlConnectionStringBuilder
               {
-                     Host = databasUri.Host,
-                     Port = databasUri.Port,
+                     Host = databaseUri.Host,
+                     Port = databaseUri.Port,
                      Username = userInfo[0],
                      Password = userInfo[1],
-                     Database = databasUri.LocalPath.TrimStart('/'),
+                     Database = databaseUri.LocalPath.TrimStart('/'),
                      SslMode = SslMode.Require,
                      TrustServerCertificate = true
 
